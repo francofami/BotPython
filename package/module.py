@@ -7,8 +7,8 @@ from selenium import webdriver
 
 
 
-def main():
-        ScraperForo.buscarPersonasForo()
+#def main():
+#        ScraperForo.buscarPersonasForo()
 
 class ScraperForo:        
     
@@ -19,9 +19,15 @@ class ScraperForo:
         options.add_argument('--headless')
 
         try:
+<<<<<<< HEAD
             driver = webdriver.Chrome('./chromedriver')
         except:
             driver = webdriver.Chrome('../chromedriver')
+=======
+            driver = webdriver.Chrome('../chromedriver')
+        except:
+            driver = webdriver.Chrome('./chromedriver')
+>>>>>>> dev
         #Abro nueva ventana de Chrome Headless
         #driver = webdriver.Chrome('./chromedriver', options=options)
         #driver = webdriver.PhantomJS('./phantomjs-2.1.1-windows/bin/phantomjs')
@@ -97,5 +103,5 @@ class ScraperForo:
         return totalObj
     
     
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+#    main()
