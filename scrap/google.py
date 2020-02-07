@@ -1,19 +1,13 @@
+from package import module
 import pandas as panda
 from selenium import webdriver
 import sys
+
 sys.path.append('../')
-from package import module
-from selenium.webdriver.common.keys import Keys
+
 
 def main():
-
-    # scrap user names from forum
-    """users = module.ScraperForo.buscarPersonasForo()
-    u1 = ScraperGoogle(users.Name, users.Date, users.Title, users.Link)
-
-    print("User names:\n")
-    print(u1.name)"""
-    print("hello")
+    print("Iniciando...")
     ScraperGoogle.search()
 
 
@@ -32,75 +26,42 @@ class ScraperGoogle:
     def search():
 
         # scrap user names from forum
-        users = module.ScraperForo.buscarPersonasForo()
-        u1 = []
-        u1 = ScraperGoogle(users.Name, users.Date, users.Title, users.Link)
-
+        users = module.ScraperForo.buscar_foro()
+        users = ScraperGoogle(users.Name, users.Date, users.Title, users.Link)
 
         print("User names:\n")
-        print(u1.name)
+        print(users.name)
 
-
-
-        # Scrap google input tag
-        # input = driver.find_elements_by_class_name("gLFyf")
-        len = u1.__sizeof__()
         # new Chrome tab
         driver = webdriver.Chrome('../chromedriver.exe')
 
-        totalNames = []
-        totalDates = []
-        totalqTitles = []
-        totalqLinks = []
-        LinkedLinks = []
-
-        #adjunto fecha
-        #for date in dates:
-
-        #adjunto titulo de la pregunta y link a pregunta en el foro
-        #for title in qTitles:
+        links_perfiles = []
 
 
-        #adjunto nombre de usuario y link a linkedin
-        for usuario in u1.name:
 
+        # adjunto nombre de usuario y link a linkedin
+        for usuario in users.name:
 
             # opens google
-            driver.get("https://google.com")
+            ScraperGoogle.cargar_google(driver)
 
-            googleInput = driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[1]/div/div[2]/input')
+
             try:
-                googleInput.send_keys("\"\"" + usuario + "\"\"" + 'salesforce site:linkedin.com' )
-                # search button
-                driver.find_element_by_xpath('//*[@id="lga"]').click()
-                driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[3]/center/input[1]').click()
-                # googleInput.sendKeys(Keys.RETURN)
+                ScraperGoogle.iniciar_busqueda(driver, usuario, "salesforce")
 
-                # google scraping
-                # bigDiv = driver.find_element_by_class_name('srg')
-                Links = driver.find_element_by_xpath('//*[@id="rso"]/div/div/div[1]/div/div/div[1]/a')
-                LinkedLinks.append(Links.get_attribute("href"))
+                ScraperGoogle.tomar_links(links_perfiles, driver)
             except:
-                print("NoSuchElementException - user("+usuario+") was probably not found on google")
+                print("NoSuchElementException - user(" + usuario + ") was probably not found on google")
                 print("Searching again without the salesforce keyword...")
 
-                # opens google
-                driver.get("https://google.com")
+                ScraperGoogle.cargar_google(driver)
 
-                googleInput = driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[1]/div/div[2]/input')
-                googleInput.send_keys("\"\"" + usuario + "\"\"" + ' site:linkedin.com')
-                # search button
-                driver.find_element_by_xpath('//*[@id="lga"]').click()
-                driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[3]/center/input[1]').click()
-                # googleInput.sendKeys(Keys.RETURN)
+                ScraperGoogle.iniciar_busqueda(driver, usuario, "")
 
-                # google scraping
-                # bigDiv = driver.find_element_by_class_name('srg')
-                Links = driver.find_element_by_xpath('//*[@id="rso"]/div/div/div[1]/div/div/div[1]/a')
-                LinkedLinks.append(Links.get_attribute("href"))
+                ScraperGoogle.tomar_links(links_perfiles, driver)
 
-        #myFile = {'Linkedin': LinkedLinks}
-        users2 = {'Date':u1.date, 'Name':u1.name, 'Title':u1.title, 'Link forum':u1.link, 'Linkedin': LinkedLinks}
+        # myFile = {'Linkedin': LinkedLinks}
+        users2 = {'Date': u1.date, 'Name': u1.name, 'Title': u1.title, 'Link forum': u1.link, 'Linkedin': links_perfiles}
         myFileObj = type('obj', (object,), users2)
 
         df = panda.DataFrame(users2)
@@ -110,6 +71,22 @@ class ScraperGoogle:
         print("Scraping finished")
         return myFileObj
 
+    @staticmethod
+    def cargar_google(driver):
+        driver.get("https://google.com")
+
+    @staticmethod
+    def tomar_links(links_perfiles, driver):
+        links = driver.find_element_by_xpath('//*[@id="rso"]/div/div/div[1]/div/div/div[1]/a')
+        links_perfiles.append(links.get_attribute("href"))
+
+    @staticmethod
+    def iniciar_busqueda(driver, usuario, parametros_busqueda):
+        buscador_input = driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[1]/div/div[2]/input')
+        buscador_input.send_keys("\"" + usuario + "\" \"" + parametros_busqueda + '\" site:linkedin.com')
+        driver.find_element_by_xpath('//*[@id="lga"]').click()
+        driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[3]/center/input[1]').click()
+
 
 if __name__ == '__main__':
-   main()
+    main()
