@@ -46,7 +46,7 @@ class ScraperGoogle:
         # input = driver.find_elements_by_class_name("gLFyf")
         len = u1.__sizeof__()
         # new Chrome tab
-        driver = webdriver.Chrome('../chromedriver')
+        driver = webdriver.Chrome('./chromedriver')
 
         totalNames = []
         totalDates = []
