@@ -2,7 +2,7 @@ import pandas as panda
 from selenium import webdriver
 import sys
 sys.path.append('../')
-from BotPython.package import module
+from package import module
 from selenium.webdriver.common.keys import Keys
 
 def main():
@@ -46,7 +46,7 @@ class ScraperGoogle:
         # input = driver.find_elements_by_class_name("gLFyf")
         len = u1.__sizeof__()
         # new Chrome tab
-        driver = webdriver.Chrome('./chromedriver')
+        driver = webdriver.Chrome('../chromedriver.exe')
 
         totalNames = []
         totalDates = []
