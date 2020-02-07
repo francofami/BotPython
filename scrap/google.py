@@ -26,6 +26,7 @@ class ScraperGoogle:
 
         self.link = link
 
+    @staticmethod
     def search():
 
         # scrap user names from forum
