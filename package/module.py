@@ -7,8 +7,8 @@ from selenium import webdriver
 
 
 
-def main():
-        ScraperForo.buscarPersonasForo()
+#def main():
+#        ScraperForo.buscarPersonasForo()
 
 class ScraperForo:        
     
@@ -94,5 +94,5 @@ class ScraperForo:
         return totalObj
     
     
-if __name__ == '__main__':
-    main()
+#if __name__ == '__main__':
+#    main()
