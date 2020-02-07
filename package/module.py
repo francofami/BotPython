@@ -18,7 +18,10 @@ class ScraperForo:
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
 
-        driver = webdriver.Chrome('./chromedriver')
+        try:
+            driver = webdriver.Chrome('../chromedriver')
+        except:
+            driver = webdriver.Chrome('./chromedriver')
         #Abro nueva ventana de Chrome Headless
         #driver = webdriver.Chrome('./chromedriver', options=options)
         #driver = webdriver.PhantomJS('./phantomjs-2.1.1-windows/bin/phantomjs')
