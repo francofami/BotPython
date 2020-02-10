@@ -6,7 +6,7 @@ except:
     from package import scraper_foro
 import pandas as panda
 from selenium.common.exceptions import NoSuchElementException
-
+import duckduckgo
 
 sys.path.append('../')
 
@@ -100,6 +100,9 @@ class ScraperGoogle:
         driver.find_element_by_xpath('//*[@id="lga"]').click()
         driver.find_element_by_xpath('//*[@id="tsf"]/div[2]/div[1]/div[3]/center/input[1]').click()
 
+    @staticmethod
+    def iniciar_busqueda_api(usuario, parametros_busqueda):
+        answer = duckduckgo.query(usuario+" "+parametros_busqueda)
 
 if __name__ == '__main__':
     main()
