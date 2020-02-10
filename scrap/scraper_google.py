@@ -1,7 +1,12 @@
-from package import scraper_foro
+try:
+    import sys
+    sys.path.append('../')
+    from BotPython.package import scraper_foro
+except:
+    from package import scraper_foro
 import pandas as panda
 from selenium.common.exceptions import NoSuchElementException
-import sys
+
 
 sys.path.append('../')
 
