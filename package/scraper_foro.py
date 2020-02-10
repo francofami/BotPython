@@ -50,7 +50,10 @@ class ScraperForo:
     def abrir_navegador():
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
-        driver = webdriver.Chrome('../chromedriver.exe')
+        try:
+            driver = webdriver.Chrome('../chromedriver')
+        except:
+            driver = webdriver.Chrome('./chromedriver')
         return driver
 
     @staticmethod
