@@ -8,9 +8,9 @@ class ScraperForo:
     @staticmethod
     def buscar_foro():
 
-        driver = ScraperForo.declarar_variables()
+        driver = ScraperForo.abrir_navegador()
 
-        ScraperForo.abrir_foro(driver)
+        ScraperForo.ir_foro(driver)
 
         ScraperForo.cerrar_popups(driver)
 
@@ -37,18 +37,17 @@ class ScraperForo:
 
     @staticmethod
     def pasar_a_objeto(total):
-        # Creo objeto que contiene los arrays con las fechas, nombres, etc
-        totalObj = type('obj', (object,), total)
+        objeto_usuarios = type('obj', (object,), total)
         df = pd.DataFrame(total)
-        return df, totalObj
+        return df, objeto_usuarios
 
     @staticmethod
-    def abrir_foro(driver):
+    def ir_foro(driver):
         # Abro foro
         driver.get("https://developer.salesforce.com/forums#!/feedtype=RECENT&dc=Jobs_Board&criteria=OPENQUESTIONS")
 
     @staticmethod
-    def declarar_variables():
+    def abrir_navegador():
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
         driver = webdriver.Chrome('../chromedriver.exe')

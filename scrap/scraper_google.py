@@ -1,6 +1,6 @@
-from package import module
+from package import scraper_foro
 import pandas as panda
-from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 import sys
 
 sys.path.append('../')
@@ -26,59 +26,68 @@ class ScraperGoogle:
     def search():
 
         # scrap user names from forum
-        users = module.ScraperForo.buscar_foro()
+        users = scraper_foro.ScraperForo.buscar_foro()
         users = ScraperGoogle(users.Name, users.Date, users.Title, users.Link)
 
-        print("User names:\n")
-        print(users.name)
+        driver = scraper_foro.ScraperForo.abrir_navegador()
 
-        # new Chrome tab
-        driver = webdriver.Chrome('../chromedriver.exe')
-
-        links_perfiles = []
-
-
-
-        # adjunto nombre de usuario y link a linkedin
         for usuario in users.name:
 
-            # opens google
             ScraperGoogle.cargar_google(driver)
-
 
             try:
                 ScraperGoogle.iniciar_busqueda(driver, usuario, "salesforce")
 
-                ScraperGoogle.tomar_links(links_perfiles, driver)
-            except:
-                print("NoSuchElementException - user(" + usuario + ") was probably not found on google")
-                print("Searching again without the salesforce keyword...")
+                links_perfiles = ScraperGoogle.tomar_links(driver)
+            except NoSuchElementException as e:
+                ScraperGoogle.notificar_excepcion(e, usuario)
 
                 ScraperGoogle.cargar_google(driver)
 
                 ScraperGoogle.iniciar_busqueda(driver, usuario, "")
 
-                ScraperGoogle.tomar_links(links_perfiles, driver)
+                links_perfiles = ScraperGoogle.tomar_links(driver)
+
+            except ValueError as e:
+                print(e)
+                continue
+
+            finally:
+                continue
 
         # myFile = {'Linkedin': LinkedLinks}
-        users2 = {'Date': u1.date, 'Name': u1.name, 'Title': u1.title, 'Link forum': u1.link, 'Linkedin': links_perfiles}
-        myFileObj = type('obj', (object,), users2)
+        objeto_perfiles, users2 = ScraperGoogle.parse_objeto(links_perfiles, users)
 
         df = panda.DataFrame(users2)
         df.to_csv('links.csv', index=False)
 
         driver.close()
         print("Scraping finished")
-        return myFileObj
+        return objeto_perfiles
+
+
+    @staticmethod
+    def parse_objeto(links_perfiles, users):
+        users2 = {'Date': users.date, 'Name': users.name, 'Title': users.title, 'Link forum': users.link,
+                  'Linkedin': links_perfiles}
+        objeto_perfiles = type('obj', (object,), users2)
+        return objeto_perfiles, users2
+
+    @staticmethod
+    def notificar_excepcion(e, usuario):
+        print(e + " - user(" + usuario + ") was probably not found on google")
+        print("Searching again without the salesforce keyword...")
 
     @staticmethod
     def cargar_google(driver):
         driver.get("https://google.com")
 
     @staticmethod
-    def tomar_links(links_perfiles, driver):
+    def tomar_links(driver):
+        links_perfiles = []
         links = driver.find_element_by_xpath('//*[@id="rso"]/div/div/div[1]/div/div/div[1]/a')
         links_perfiles.append(links.get_attribute("href"))
+        return links_perfiles
 
     @staticmethod
     def iniciar_busqueda(driver, usuario, parametros_busqueda):
